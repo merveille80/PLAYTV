@@ -1,0 +1,22 @@
+{
+  "name": "PLAYTV",
+  "short_name": "PLAYTV",
+  "description": "La plateforme IPTV streaming pour les Congolais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090f",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}

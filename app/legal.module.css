@@ -1,0 +1,82 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  padding: 110px 0 56px;
+}
+
+.wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.card {
+  padding: 34px;
+}
+
+.title {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.intro {
+  color: var(--text-secondary);
+  margin-bottom: 26px;
+}
+
+.section {
+  margin-top: 22px;
+}
+
+.section h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.section p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.section ul {
+  margin: 10px 0 0 20px;
+  color: var(--text-secondary);
+  display: grid;
+  gap: 6px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  margin-top: 24px;
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+.backLink:hover {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 92px 0 42px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .section h2 {
+    font-size: 18px;
+  }
+}

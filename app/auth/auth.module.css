@@ -1,0 +1,135 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  padding: 120px 0 60px;
+  display: flex;
+  align-items: center;
+}
+
+.wrapper {
+  max-width: 440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.card {
+  padding: 40px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  background: var(--gradient-button);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.inputWrap svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.inputWrap input {
+  padding-left: 48px;
+}
+
+.toggle {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.toggle button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 700;
+  margin-left: 8px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.toggle button:hover {
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  .main {
+    padding: 100px 0 40px;
+  }
+  
+  .card {
+    padding: 30px 20px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+.inputWrap input:focus-visible, .toggle button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}

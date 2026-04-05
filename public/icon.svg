@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Very BOLD Antennas - Same color as logo gradient -->
+  <path d="M10 5.5L16 11L22 5.5" fill="none" stroke="url(#grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="10" cy="5.5" r="2.5" fill="url(#grad)" />
+  <circle cx="22" cy="5.5" r="2.5" fill="url(#grad)" />
+  
+  <!-- Signature Squircle TV Body -->
+  <rect x="2" y="11" width="28" height="19" rx="7" fill="url(#grad)" />
+  
+  <!-- Clear Play Triangle -->
+  <path d="M13 16L20 20.5L13 25V16Z" fill="white" />
+</svg>
