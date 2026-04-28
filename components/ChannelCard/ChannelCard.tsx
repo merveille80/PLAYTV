@@ -1,6 +1,6 @@
 'use client';
 import styles from './ChannelCard.module.css';
-import { Play, TvOff } from 'lucide-react';
+import { Play, VideoOff } from 'lucide-react';
 import Link from 'next/link';
 import type { Channel } from '@/lib/channels';
 import ChannelLogo from '@/components/ChannelLogo/ChannelLogo';
@@ -48,7 +48,7 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
         )}
       </div>
       <div className={styles.playBtn} style={!isLive ? { background: 'rgba(100, 116, 139, 0.9)' } : {}}>
-        {isLive ? <Play size={14} fill="white" strokeWidth={1.5} /> : <TvOff size={14} strokeWidth={1.5} color="white" />}
+        {isLive ? <Play size={14} fill="white" strokeWidth={1.5} /> : <VideoOff size={14} strokeWidth={1.5} color="white" />}
       </div>
     </Link>
   );
