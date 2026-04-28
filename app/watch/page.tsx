@@ -65,9 +65,10 @@ function WatchContent() {
   }, []);
 
   const availableCountries = useMemo(() => {
+    // Only show countries that have at least one channel
     const codes = Array.from(
       new Set(
-        liveChannels
+        channels
           .map((channel) => channel.country?.toUpperCase())
           .filter((code): code is string => Boolean(code)),
       ),
@@ -85,17 +86,27 @@ function WatchContent() {
       const countryB = countryNameFormatter?.of(b) ?? b;
       return countryA.localeCompare(countryB, 'fr', { sensitivity: 'base' });
     });
-  }, [liveChannels, countryNameFormatter]);
+  }, [channels, countryNameFormatter]);
 
   const filteredChannels = useMemo(() => {
-    return liveChannels.filter(c => {
-      const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = activeCategory === 'all' || (c.categories && c.categories.includes(activeCategory));
-      const matchesCountry =
-        activeCountry === 'all' || (c.country && c.country.toUpperCase() === activeCountry);
-      return matchesSearch && matchesCategory && matchesCountry;
-    });
-  }, [liveChannels, search, activeCategory, activeCountry]);
+    return channels
+      .filter(c => {
+        const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || (c.categories && c.categories.includes(activeCategory));
+        const matchesCountry =
+          activeCountry === 'all' || (c.country && c.country.toUpperCase() === activeCountry);
+        return matchesSearch && matchesCategory && matchesCountry;
+      })
+      .sort((a, b) => {
+        // Sort live channels first
+        const aLive = Boolean(a.streamUrl && a.streamUrl.trim().length > 0);
+        const bLive = Boolean(b.streamUrl && b.streamUrl.trim().length > 0);
+        if (aLive && !bLive) return -1;
+        if (!aLive && bLive) return 1;
+        // Then sort alphabetically
+        return a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' });
+      });
+  }, [channels, search, activeCategory, activeCountry]);
 
   const displayedChannels = useMemo(
     () => filteredChannels.slice(0, visibleCount),

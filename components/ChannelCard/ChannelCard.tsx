@@ -1,6 +1,6 @@
 'use client';
 import styles from './ChannelCard.module.css';
-import { Play } from 'lucide-react';
+import { Play, TvOff } from 'lucide-react';
 import Link from 'next/link';
 import type { Channel } from '@/lib/channels';
 import ChannelLogo from '@/components/ChannelLogo/ChannelLogo';
@@ -12,9 +12,10 @@ interface ChannelCardProps {
 export default function ChannelCard({ channel }: ChannelCardProps) {
   const categoryColor = getCategoryColor(channel.categories?.[0] || '');
   const countryFlag = getCountryFlag(channel.country);
+  const isLive = Boolean(channel.streamUrl && channel.streamUrl.trim().length > 0);
 
   return (
-    <Link href={`/watch/${encodeURIComponent(channel.id)}`} className={styles.card}>
+    <Link href={`/watch/${encodeURIComponent(channel.id)}`} className={`${styles.card} ${!isLive ? styles.cardOffline : ''}`}>
       <div className={styles.logoWrap}>
         <ChannelLogo
           key={`${channel.id}-${channel.logo ?? ''}-${channel.website ?? ''}`}
@@ -26,10 +27,16 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
             color: categoryColor,
           }}
         />
-        <div className={styles.liveIndicator}>
-          <span className={styles.liveDot} />
-          LIVE
-        </div>
+        {isLive ? (
+          <div className={styles.liveIndicator}>
+            <span className={styles.liveDot} />
+            LIVE
+          </div>
+        ) : (
+          <div className={styles.offlineIndicator}>
+            OFFLINE
+          </div>
+        )}
         {countryFlag && <div className={styles.countryFlag}>{countryFlag}</div>}
       </div>
       <div className={styles.info}>
@@ -40,8 +47,8 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
           </span>
         )}
       </div>
-      <div className={styles.playBtn}>
-        <Play size={14} fill="white" strokeWidth={1.5} />
+      <div className={styles.playBtn} style={!isLive ? { background: 'rgba(100, 116, 139, 0.9)' } : {}}>
+        {isLive ? <Play size={14} fill="white" strokeWidth={1.5} /> : <TvOff size={14} strokeWidth={1.5} color="white" />}
       </div>
     </Link>
   );
