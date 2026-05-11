@@ -136,17 +136,7 @@ export async function fetchChannels(): Promise<Channel[]> {
 export function getFallbackChannels(): Channel[] {
   return [
     { id: 'RTNC.cd', name: 'RTNC', country: 'CD', categories: ['general'], logo: 'https://iptv-org.github.io/iptv/logos/RTNC.cd.png', streamUrl: 'https://iptv-org.github.io/iptv/countries/cd.m3u' },
-    { id: 'BongoTV.cd', name: 'Bongo TV', country: 'CD', categories: ['entertainment'], logo: '' },
-    { id: 'Canal5.cd', name: 'Canal 5 RDC', country: 'CD', categories: ['general'], logo: '' },
-    { id: '2STV.sn', name: '2STV', country: 'SN', categories: ['entertainment'], logo: 'https://iptv-org.github.io/iptv/logos/2STV.sn.png' },
-    { id: 'TFM.sn', name: 'TFM', country: 'SN', categories: ['entertainment'], logo: '' },
-    { id: 'LCI.fr', name: 'LCI', country: 'FR', categories: ['news'], logo: '' },
-    { id: 'BFMTVParis.fr', name: 'BFMTV', country: 'FR', categories: ['news'], logo: '' },
-    { id: 'CRTV.cm', name: 'CRTV', country: 'CM', categories: ['general'], logo: '' },
-    { id: 'NTA.ng', name: 'NTA', country: 'NG', categories: ['general'], logo: '' },
-    { id: 'GhanaTV.gh', name: 'GhanaTV', country: 'GH', categories: ['general'], logo: '' },
-    { id: 'Aljazeera.qa', name: 'Al Jazeera', country: 'QA', categories: ['news'], logo: '' },
-    { id: 'CGTN.cn', name: 'CGTN', country: 'CN', categories: ['news'], logo: '' },
+    { id: '2STV.sn', name: '2STV', country: 'SN', categories: ['entertainment'], logo: 'https://iptv-org.github.io/iptv/logos/2STV.sn.png', streamUrl: 'https://iptv-org.github.io/iptv/countries/sn.m3u' },
   ];
 }
 
