@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user || user.email !== 'merveillesoft80@gmail.com') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
     const { data, error } = await supabase.from('admin_channels').insert([{
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user || user.email !== 'merveillesoft80@gmail.com') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await req.json();
     const { error } = await supabase.from('admin_channels').delete().eq('id', id);
@@ -49,7 +49,7 @@ export async function DELETE(req: Request) {
 export async function PUT(req: Request) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user || user.email !== 'merveillesoft80@gmail.com') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
     const { error } = await supabase.from('admin_channels').update({

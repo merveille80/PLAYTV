@@ -31,7 +31,7 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!session || session.user.email !== 'merveillesoft80@gmail.com') {
         window.location.href = '/';
         return;
       }
