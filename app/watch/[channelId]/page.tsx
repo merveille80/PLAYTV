@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ChevronLeft, Info, Share2, Heart, List, Tv } from 'lucide-react';
+import { ChevronLeft, Info, Share2, Heart, List, Tv, Lock } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar/Navbar';
 import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
@@ -21,6 +21,7 @@ export default function ChannelDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -78,6 +79,35 @@ export default function ChannelDetailPage() {
 
     checkFavorite();
   }, [channel]);
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        setHasAccess(false);
+        return;
+      }
+
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan, subscription_expiry')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!profile || !profile.plan || !profile.subscription_expiry) {
+          setHasAccess(false);
+        } else {
+          const expiry = new Date(profile.subscription_expiry);
+          setHasAccess(expiry > new Date());
+        }
+      } catch (err) {
+        console.error('Error checking access:', err);
+        setHasAccess(false);
+      }
+    };
+    checkAccess();
+  }, []);
 
   useEffect(() => {
     if (!feedback) return;
@@ -191,7 +221,20 @@ export default function ChannelDetailPage() {
             {/* Player Column */}
             <div className={styles.playerColumn}>
               <div className={styles.playerWrapper}>
-                {hasStream ? (
+                {hasAccess === null ? (
+                  <div className={styles.unavailableState}>
+                    <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: '12px' }} />
+                  </div>
+                ) : !hasAccess ? (
+                  <div className={styles.unavailableState}>
+                    <Lock size={48} style={{ color: 'var(--accent)', marginBottom: '16px' }} />
+                    <h2>Contenu Réservé</h2>
+                    <p style={{ maxWidth: '400px', margin: '0 auto 24px', opacity: 0.8 }}>Vous devez avoir un abonnement actif pour regarder cette chaîne en direct sur PLAYTV.</p>
+                    <Link href="/subscribe" className="btn-primary">
+                      S'abonner maintenant
+                    </Link>
+                  </div>
+                ) : hasStream ? (
                   <VideoPlayer
                     key={`${channel.id}-${channel.streamUrl}`}
                     src={channel.streamUrl as string}

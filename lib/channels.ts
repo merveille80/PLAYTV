@@ -119,7 +119,8 @@ export async function fetchChannels(): Promise<Channel[]> {
         });
       }
 
-      const result = Array.from(merged.values());
+      // Filter out channels without a valid streamUrl
+      const result = Array.from(merged.values()).filter(c => Boolean(c.streamUrl) && c.streamUrl!.trim().length > 0);
       return setChannelsCache(result.length > 0 ? result : getFallbackChannels());
     } catch {
       return setChannelsCache(getFallbackChannels());
