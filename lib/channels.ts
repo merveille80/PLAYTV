@@ -63,7 +63,7 @@ export async function fetchStreams(): Promise<Map<string, string>> {
     const data: StreamRow[] = await res.json();
     const map = new Map<string, string>();
     for (const s of data) {
-      if (s.status !== 'offline' && s.url && !map.has(s.channel)) {
+      if (s.status === 'online' && s.url && !map.has(s.channel)) {
         map.set(s.channel, s.url);
       }
     }
@@ -94,7 +94,7 @@ export async function fetchChannels(): Promise<Channel[]> {
       ]);
 
       if (!channelsRes.ok) {
-        return setChannelsCache([...adminChannels, ...getFallbackChannels()]);
+        return setChannelsCache([...adminChannels]);
       }
 
       const allChannels: IPTVOrgChannel[] = await channelsRes.json();
@@ -121,9 +121,9 @@ export async function fetchChannels(): Promise<Channel[]> {
 
       // Filter out channels without a valid streamUrl
       const result = Array.from(merged.values()).filter(c => Boolean(c.streamUrl) && c.streamUrl!.trim().length > 0);
-      return setChannelsCache(result.length > 0 ? result : getFallbackChannels());
+      return setChannelsCache(result);
     } catch {
-      return setChannelsCache(getFallbackChannels());
+      return setChannelsCache([]);
     } finally {
       inFlightChannelsPromise = null;
     }
@@ -132,15 +132,7 @@ export async function fetchChannels(): Promise<Channel[]> {
   return inFlightChannelsPromise;
 }
 
-// Fallback curated channels for when API is slow
-export function getFallbackChannels(): Channel[] {
-  return [
-    { id: 'RTNC.cd', name: 'RTNC', country: 'CD', categories: ['general'], logo: 'https://iptv-org.github.io/iptv/logos/RTNC.cd.png', streamUrl: 'https://iptv-org.github.io/iptv/countries/cd.m3u' },
-    { id: '2STV.sn', name: '2STV', country: 'SN', categories: ['entertainment'], logo: 'https://iptv-org.github.io/iptv/logos/2STV.sn.png', streamUrl: 'https://iptv-org.github.io/iptv/countries/sn.m3u' },
-  ];
-}
 
-// Get custom channels stored by admin (from Supabase)
 export async function getAdminChannels(): Promise<Channel[]> {
   try {
     const { data, error } = await supabase
