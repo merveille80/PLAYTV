@@ -95,18 +95,15 @@ export default function ChannelDetailPage() {
     let previewTimer: number;
 
     const checkAccess = async () => {
-      setHasAccess(true); // Allow preview immediately
-
       const { data: { session } } = await supabase.auth.getSession();
-
-      previewTimer = window.setTimeout(async () => {
+      
+      const checkSubscription = async () => {
         if (!session?.user) {
           setHasAccess(false);
           setBlockReason('auth');
           return;
         }
 
-        // Logged in, check sub
         try {
           const { data: profile } = await supabase
             .from('profiles')
@@ -122,6 +119,8 @@ export default function ChannelDetailPage() {
             if (expiry <= new Date()) {
               setHasAccess(false);
               setBlockReason('pay');
+            } else {
+              setHasAccess(true);
             }
           }
         } catch (err) {
@@ -129,7 +128,20 @@ export default function ChannelDetailPage() {
           setHasAccess(false);
           setBlockReason('pay');
         }
-      }, 10000); // 10 seconds
+      };
+
+      const previewConsumed = localStorage.getItem('playtv_preview_consumed');
+
+      if (previewConsumed === 'true') {
+        // No preview, check immediately
+        checkSubscription();
+      } else {
+        setHasAccess(true); // Allow preview immediately
+        previewTimer = window.setTimeout(async () => {
+          localStorage.setItem('playtv_preview_consumed', 'true');
+          checkSubscription();
+        }, 10000); // 10 seconds
+      }
     };
 
     checkAccess();

@@ -87,7 +87,7 @@ export default function VideoPlayer({ src, poster, autoPlay = true }: VideoPlaye
         hls.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
             console.error('HLS fatal error:', data);
-            setError("Impossible de charger ce flux. Il est peut-être hors ligne.");
+            setError("Signal Interrompu : Cette chaîne rencontre des difficultés techniques.");
             setIsLoading(false);
           }
         });
@@ -100,11 +100,11 @@ export default function VideoPlayer({ src, poster, autoPlay = true }: VideoPlaye
           if (autoPlay) video.play().catch(() => setIsPlaying(false));
         });
         video.addEventListener('error', () => {
-          setError("Erreur de lecture native.");
+          setError("Signal Interrompu : Erreur de lecture sur votre appareil.");
           setIsLoading(false);
         });
       } else {
-        setError("Votre navigateur ne supporte pas le streaming HLS.");
+        setError("Votre navigateur ne supporte pas la vidéo en direct.");
         setIsLoading(false);
       }
     };
