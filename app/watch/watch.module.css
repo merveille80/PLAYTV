@@ -107,6 +107,7 @@
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+  text-decoration: none;
 }
 
 .infoBtn:hover {

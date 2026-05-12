@@ -187,10 +187,10 @@ function WatchContent() {
                   <Play size={24} fill="currentColor" />
                   <span>Regarder Direct</span>
                 </Link>
-                <button className={styles.infoBtn}>
+                <Link href={`/watch/${featuredChannel.id}`} className={styles.infoBtn}>
                   <Info size={24} />
                   <span>Plus d'infos</span>
-                </button>
+                </Link>
               </div>
             </div>
           </section>
