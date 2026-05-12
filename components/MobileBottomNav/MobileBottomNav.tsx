@@ -12,11 +12,11 @@ export default function MobileBottomNav() {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setIsLogged(!!data.session);
+    supabase.auth.getSession().then((res: any) => {
+      setIsLogged(!!res.data?.session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setIsLogged(!!session);
     });
 
