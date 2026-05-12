@@ -168,6 +168,27 @@
   background: rgba(239, 68, 68, 0.12);
 }
 
+.zappingBtn {
+  width: 44px;
+  height: 44px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.zappingBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-glass-strong);
+}
+
 .feedback {
   padding: 8px 12px;
   font-size: 12px;

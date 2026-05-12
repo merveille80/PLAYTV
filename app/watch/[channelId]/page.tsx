@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ChevronLeft, Info, Share2, Heart, List, Tv, Lock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info, Share2, Heart, List, Tv, Lock } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar/Navbar';
 import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
@@ -23,6 +23,9 @@ export default function ChannelDetailPage() {
   const [feedback, setFeedback] = useState('');
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [blockReason, setBlockReason] = useState<'auth' | 'pay' | null>(null);
+  
+  const [prevChannel, setPrevChannel] = useState<Channel | null>(null);
+  const [nextChannel, setNextChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -34,15 +37,22 @@ export default function ChannelDetailPage() {
         if (found) {
           setChannel(found);
           // Get 6 recommendations from same category or same country with active stream
-          const recs = allChannels
+          const activeChannels = allChannels.filter(c => Boolean(c.streamUrl));
+          const recs = activeChannels
             .filter(
               (c) =>
                 c.id !== found.id &&
-                Boolean(c.streamUrl) &&
                 (c.categories?.includes(found.categories?.[0] || '') || c.country === found.country),
             )
             .slice(0, 6);
           setRecommendations(recs);
+          
+          // Determine prev/next for zapping
+          const currentIndex = activeChannels.findIndex(c => c.id === found.id);
+          if (currentIndex !== -1) {
+            setPrevChannel(currentIndex > 0 ? activeChannels[currentIndex - 1] : activeChannels[activeChannels.length - 1]);
+            setNextChannel(currentIndex < activeChannels.length - 1 ? activeChannels[currentIndex + 1] : activeChannels[0]);
+          }
         }
       } catch (e) {
         console.error('Failed to load channel', e);
@@ -302,6 +312,16 @@ export default function ChannelDetailPage() {
                   </div>
                 </div>
                 <div className={styles.metaRight}>
+                  {prevChannel && (
+                    <Link href={`/watch/${encodeURIComponent(prevChannel.id)}`} className={styles.zappingBtn} title="Chaîne Précédente">
+                      <ChevronLeft size={20} />
+                    </Link>
+                  )}
+                  {nextChannel && (
+                    <Link href={`/watch/${encodeURIComponent(nextChannel.id)}`} className={styles.zappingBtn} title="Chaîne Suivante">
+                      <ChevronRight size={20} />
+                    </Link>
+                  )}
                   <button
                     type="button"
                     className={`${styles.actionBtn} ${isFavorite ? styles.actionBtnActive : ''}`}

@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
+import MobileBottomNav from '@/components/MobileBottomNav/MobileBottomNav';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body>
+        {children}
+        <MobileBottomNav />
+      </body>
     </html>
   );
 }

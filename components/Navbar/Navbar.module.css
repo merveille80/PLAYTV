@@ -217,11 +217,15 @@
 }
 
 @media (max-width: 768px) {
-  .navLinks, .navActions {
+  .navLinks {
     display: none;
   }
 
-  .hamburger {
+  .navActions {
     display: flex;
+  }
+
+  .hamburger {
+    display: none;
   }
 }

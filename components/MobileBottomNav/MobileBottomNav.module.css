@@ -1,0 +1,58 @@
+.bottomNav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .bottomNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(15, 15, 20, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex: 1;
+    height: 100%;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .icon {
+    transition: all 0.2s ease;
+  }
+
+  .label {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .active {
+    color: var(--accent);
+  }
+
+  .active .icon {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.5));
+  }
+
+  .active .label {
+    opacity: 1;
+  }
+}

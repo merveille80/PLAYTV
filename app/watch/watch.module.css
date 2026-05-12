@@ -266,6 +266,12 @@
 
   .filtersWrapper {
     margin-bottom: 24px;
+    position: sticky;
+    top: 60px; /* Below navbar */
+    z-index: 40;
+    background: var(--bg-primary); /* Assuming this variable exists, or just #000 */
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
   }
 
   .filterSection {
