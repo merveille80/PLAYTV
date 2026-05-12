@@ -38,12 +38,12 @@ export default function AuthPage() {
         });
         if (error) throw error;
         
-        // Create initial profile
+        // Create initial profile without trial
         if (signUpData.user) {
           await supabase.from('profiles').insert([{
             id: signUpData.user.id,
-            plan: 'trial',
-            subscription_expiry: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+            plan: 'none',
+            subscription_expiry: new Date(0).toISOString() // Already expired
           }]);
         }
 
@@ -85,7 +85,7 @@ export default function AuthPage() {
               <div className={styles.header}>
                 <div className={styles.icon}><Tv size={24} /></div>
                 <h1>{isLogin ? 'Bon retour !' : 'Créer un compte'}</h1>
-                <p>{isLogin ? 'Connectez-vous pour voir vos chaînes' : 'Commencez vos 3 jours d\'essai gratuit'}</p>
+                <p>{isLogin ? 'Connectez-vous pour voir vos chaînes' : 'Inscrivez-vous pour accéder au direct (20 000 FC / mois)'}</p>
               </div>
 
               {error && (

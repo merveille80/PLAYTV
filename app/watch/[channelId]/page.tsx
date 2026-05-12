@@ -22,6 +22,7 @@ export default function ChannelDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [blockReason, setBlockReason] = useState<'auth' | 'pay' | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -81,32 +82,49 @@ export default function ChannelDetailPage() {
   }, [channel]);
 
   useEffect(() => {
+    let previewTimer: number;
+
     const checkAccess = async () => {
+      setHasAccess(true); // Allow preview immediately
+
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        setHasAccess(false);
-        return;
-      }
 
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('plan, subscription_expiry')
-          .eq('id', session.user.id)
-          .single();
-
-        if (!profile || !profile.plan || !profile.subscription_expiry) {
+      previewTimer = window.setTimeout(async () => {
+        if (!session?.user) {
           setHasAccess(false);
-        } else {
-          const expiry = new Date(profile.subscription_expiry);
-          setHasAccess(expiry > new Date());
+          setBlockReason('auth');
+          return;
         }
-      } catch (err) {
-        console.error('Error checking access:', err);
-        setHasAccess(false);
-      }
+
+        // Logged in, check sub
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('plan, subscription_expiry')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!profile || !profile.plan || !profile.subscription_expiry) {
+            setHasAccess(false);
+            setBlockReason('pay');
+          } else {
+            const expiry = new Date(profile.subscription_expiry);
+            if (expiry <= new Date()) {
+              setHasAccess(false);
+              setBlockReason('pay');
+            }
+          }
+        } catch (err) {
+          console.error('Error checking access:', err);
+          setHasAccess(false);
+          setBlockReason('pay');
+        }
+      }, 10000); // 10 seconds
     };
+
     checkAccess();
+
+    return () => window.clearTimeout(previewTimer);
   }, []);
 
   useEffect(() => {
@@ -228,11 +246,23 @@ export default function ChannelDetailPage() {
                 ) : !hasAccess ? (
                   <div className={styles.unavailableState}>
                     <Lock size={48} style={{ color: 'var(--accent)', marginBottom: '16px' }} />
-                    <h2>Contenu Réservé</h2>
-                    <p style={{ maxWidth: '400px', margin: '0 auto 24px', opacity: 0.8 }}>Vous devez avoir un abonnement actif pour regarder cette chaîne en direct sur PLAYTV.</p>
-                    <Link href="/subscribe" className="btn-primary">
-                      S'abonner maintenant
-                    </Link>
+                    {blockReason === 'auth' ? (
+                      <>
+                        <h2>Connectez-vous pour continuer</h2>
+                        <p style={{ maxWidth: '400px', margin: '0 auto 24px', opacity: 0.8 }}>Votre aperçu gratuit de 10 secondes est terminé. Connectez-vous pour continuer.</p>
+                        <Link href="/auth" className="btn-primary">
+                          Se connecter avec Google
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <h2>Abonnement Requis</h2>
+                        <p style={{ maxWidth: '400px', margin: '0 auto 24px', opacity: 0.8 }}>Pour continuer à regarder les chaînes en direct, vous devez souscrire à notre abonnement (20 000 FC / mois).</p>
+                        <Link href="/subscribe" className="btn-primary">
+                          S'abonner (20 000 FC)
+                        </Link>
+                      </>
+                    )}
                   </div>
                 ) : hasStream ? (
                   <VideoPlayer
