@@ -20,21 +20,33 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
 
     // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }: any) => {
+    supabase.auth.getSession().then(async ({ data: { session } }: any) => {
       if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('id', session.user.id)
+          .single();
+
         setUser({ 
           name: session.user.user_metadata.full_name || session.user.email?.split('@')[0], 
-          plan: 'Premium' 
+          plan: profile?.plan || 'Gratuit' 
         });
       }
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: any, session: any) => {
       if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('id', session.user.id)
+          .single();
+
         setUser({ 
           name: session.user.user_metadata.full_name || session.user.email?.split('@')[0], 
-          plan: 'Premium' 
+          plan: profile?.plan || 'Gratuit' 
         });
       } else {
         setUser(null);
@@ -102,7 +114,12 @@ export default function Navbar() {
         <div className={styles.navActions}>
           {user ? (
             <>
-              <Link href="/watch/favorites" className={styles.navLink}>Favoris</Link>
+              <Link href="/profile" className={styles.userMenu}>
+                <div className={styles.userAvatar}>
+                  {user.name[0].toUpperCase()}
+                </div>
+                <span className={styles.userName}>{user.name}</span>
+              </Link>
               <Link href="/watch" className="btn-primary" style={{ padding: '10px 20px', fontSize: '14px' }}>
                 <Tv size={16} strokeWidth={1.5} /> Regarder
               </Link>
