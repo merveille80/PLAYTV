@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Info, Share2, Heart, List, Tv, Lock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info, Share2, Heart, List, Tv, Lock, AlertTriangle, Send } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar/Navbar';
 import VideoPlayer from '@/components/VideoPlayer/VideoPlayer';
@@ -23,6 +23,9 @@ export default function ChannelDetailPage() {
   const [feedback, setFeedback] = useState('');
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [blockReason, setBlockReason] = useState<'auth' | 'pay' | null>(null);
+  const [showReport, setShowReport] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reportReason, setReportReason] = useState('Signal interrompu');
   
   const [prevChannel, setPrevChannel] = useState<Channel | null>(null);
   const [nextChannel, setNextChannel] = useState<Channel | null>(null);
@@ -215,6 +218,33 @@ export default function ChannelDetailPage() {
     details?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReporting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { error } = await supabase
+        .from('channel_reports')
+        .insert([{
+          channel_id: channel?.id,
+          channel_name: channel?.name,
+          user_id: session?.user?.id || null,
+          reason: reportReason,
+        }]);
+
+      if (error) throw error;
+      
+      setFeedback('Signalement envoyé. Merci !');
+      setShowReport(false);
+    } catch (err) {
+      console.error('Error reporting:', err);
+      setFeedback('Erreur lors de l\'envoi');
+    } finally {
+      setReporting(false);
+    }
+  };
+
   const hasStream = Boolean(channel?.streamUrl && channel.streamUrl.trim().length > 0);
 
   if (loading) {
@@ -358,6 +388,15 @@ export default function ChannelDetailPage() {
                   >
                     <Info size={20} />
                   </button>
+                  <button
+                    type="button"
+                    className={styles.reportBtn}
+                    onClick={() => setShowReport(true)}
+                    title="Signaler un problème"
+                  >
+                    <AlertTriangle size={20} />
+                    <span className={styles.reportLabel}>Signaler</span>
+                  </button>
                 </div>
               </div>
 
@@ -401,6 +440,42 @@ export default function ChannelDetailPage() {
           </div>
         </div>
       </main>
+      {/* Reporting Modal */}
+      {showReport && (
+        <div className={styles.modalOverlay} onClick={() => setShowReport(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <AlertTriangle className={styles.modalIcon} />
+              <h3>Signaler un problème</h3>
+              <button className={styles.closeModal} onClick={() => setShowReport(false)}>&times;</button>
+            </div>
+            <p className={styles.modalDesc}>Aidez-nous à améliorer PLAYTV en nous signalant les problèmes sur <strong>{channel?.name}</strong>.</p>
+            
+            <form onSubmit={handleReportSubmit} className={styles.reportForm}>
+              <div className={styles.formGroup}>
+                <label>Raison du problème</label>
+                <select 
+                  value={reportReason} 
+                  onChange={e => setReportReason(e.target.value)}
+                  className={styles.modalInput}
+                  required
+                >
+                  <option value="Signal interrompu">Signal interrompu (Écran noir)</option>
+                  <option value="Mauvaise qualité">Mauvaise qualité image/son</option>
+                  <option value="Ce n'est pas la bonne chaîne">Ce n'est pas la bonne chaîne</option>
+                  <option value="Flux lent / Buffering">Flux lent / Buffering</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+              
+              <button type="submit" className="btn-primary" disabled={reporting} style={{ width: '100%', marginTop: '12px' }}>
+                {reporting ? <Loader2 className="spinner" size={18} /> : <Send size={18} />}
+                <span>{reporting ? 'Envoi...' : 'Envoyer le signalement'}</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
