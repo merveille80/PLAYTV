@@ -63,7 +63,7 @@ export async function fetchStreams(): Promise<Map<string, string>> {
     const data: StreamRow[] = await res.json();
     const map = new Map<string, string>();
     for (const s of data) {
-      if (s.status === 'online' && s.url && !map.has(s.channel)) {
+      if (s.status !== 'error' && s.status !== 'offline' && s.url && !map.has(s.channel)) {
         map.set(s.channel, s.url);
       }
     }
